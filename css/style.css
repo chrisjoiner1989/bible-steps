@@ -1,0 +1,21 @@
+:root {
+  /* === BibleSteps Color Palette === */
+  --color-bg: #f8f6f1; /* Main app background */
+  --color-primary-light: #f6c76e; /* Gold gradient start */
+  --color-primary-dark: #e5a43b; /* Gold gradient end */
+  --color-card-bg: #fff2d9; /* Card background */
+  --color-text-primary: #2e2e2e; /* Main text */
+  --color-text-secondary: #7c7c7c; /* Secondary text */
+  --color-accent: #f1b24a; /* Button highlight */
+  --color-nav-bg: #ffffff; /* Nav background */
+  --color-icon: #e8b347; /* Icon accent */
+}
+
+/* Optional gradient utility */
+.gradient-gold {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-light),
+    var(--color-primary-dark)
+  );
+}
