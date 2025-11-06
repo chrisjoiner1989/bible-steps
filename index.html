@@ -7,45 +7,82 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <header class="app-header">
-      <h1>BibleSteps</h1>
-    </header>
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time" id="current-time">10:10</span>
+      <div class="notch"></div>
+      <div class="status-icons">
+        <span class="signal">📶</span>
+        <span class="wifi">📶</span>
+        <span class="battery">🔋</span>
+      </div>
+    </div>
 
     <main class="dashboard">
-      <section class="verse card">
-        <h2>Verse of the day</h2>
-        <p id="daily-verse">Loading verse...</p>
-        <button class="btn-accent" id="new-verse-btn">Refresh Verse</button>
-      </section>
-
-      <section class="habits-section">
-        <h2>Today's Habits</h2>
-        <div class="habit-list">
-          <div class="habit-card">
-            <span>Prayer</span>
-            <button class="mark-btn">Mark as Done</button>
-          </div>
-          <div class="habit-card">
-            <span>Bible Reading</span>
-            <button class="mark-btn">Mark as Done</button>
-          </div>
-          <div class="habit-card">
-            <span>Worship</span>
-            <button class="mark-btn">Mark as Done</button>
-          </div>
-          <div class="habit-card">
-            <span>🤝 Service</span>
-            <button class="mark-btn">Mark as Done</button>
-          </div>
+      <!-- Good Morning Card -->
+      <section class="greeting-card">
+        <div class="sun-icon">☀️</div>
+        <div class="greeting-content">
+          <h2>Good morning</h2>
+          <p>Ready for today's spiritual journey?</p>
         </div>
       </section>
+
+      <!-- Verse of the Day Card -->
+      <section class="verse-card">
+        <div class="verse-header">
+          <span class="menu-icon">☰</span>
+          <h2>Verse of the Day</h2>
+        </div>
+        <div class="verse-reference">Romans 8:28</div>
+        <p class="verse-text" id="daily-verse">"And we know that in all things God works for the good of those who love him, who have been called according to his purpose."</p>
+        <div class="verse-actions">
+          <button class="btn-share">
+            <span class="share-icon">⊲</span>
+            Share
+          </button>
+          <button class="btn-read">
+            <span class="bookmark-icon">🔖</span>
+            Read
+          </button>
+        </div>
+      </section>
+
+      <!-- Streak Card -->
+      <section class="streak-card">
+        <div class="streak-content">
+          <div class="streak-badge">#11</div>
+          <div class="streak-info">
+            <h2>2 Days Streak</h2>
+            <p>Keep going! You're doing great!</p>
+          </div>
+          <span class="arrow-icon">→</span>
+        </div>
+        <button class="btn-rank">
+          <span class="plus-icon">+</span>
+          Tap to see your rank & share
+        </button>
+      </section>
     </main>
+
+    <!-- Bottom Navigation -->
     <footer class="nav-bar">
       <nav>
-        <a href="#">Home</a>
-        <a href="#">Progress</a>
-        <a href="#">Community</a>
-        <a href="#">Profile</a>
+        <a href="#" class="nav-item active">
+          <span class="nav-icon">🏠</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">📖</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">👤</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">👥</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+        </a>
       </nav>
     </footer>
 
