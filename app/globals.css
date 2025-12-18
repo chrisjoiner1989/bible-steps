@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+:root {
+  /* Light mode - warm, cozy coffee shop palette */
+  --background: #fdf8f3;           /* Warm cream (like steamed milk) */
+  --foreground: #2d1f14;           /* Deep warm brown (like dark roast coffee) */
+  --primary: #d97706;              /* Warm amber/gold (brand color) */
+  --primary-dark: #b45309;         /* Deep burnt amber */
+  --secondary: #dc8a5b;            /* Warm terracotta/clay */
+  --accent: #f59e0b;               /* Bright golden yellow */
+  --muted: #f5ebe0;                /* Soft beige (like latte foam) */
+  --border: #e8d5c4;               /* Warm taupe */
+  --success: #84a98c;              /* Soft sage green */
+  --grace: #e6c9a8;                /* Warm sand/biscuit */
+  --card-bg: #fffbf7;              /* Warm white (paper) */
+  --shadow-color: rgba(217, 119, 6, 0.15);  /* Warm amber-tinted shadow */
+
+  /* Sabbath mode colors - muted, restful */
+  --sabbath-bg: #f5ebe0;
+  --sabbath-text: #78716c;
+
+  /* Category-specific warm gradients */
+  --category-anxiety-from: #94b99e;
+  --category-anxiety-to: #84a98c;
+  --category-work-from: #e6c9a8;
+  --category-work-to: #d4a574;
+  --category-relationships-from: #e89c6c;
+  --category-relationships-to: #dc8a5b;
+  --category-justice-from: #d97706;
+  --category-justice-to: #b45309;
+  --category-sabbath-from: #c9a882;
+  --category-sabbath-to: #b8956a;
+  --category-identity-from: #f5ebe0;
+  --category-identity-to: #e6c9a8;
+  --category-community-from: #fbbf24;
+  --category-community-to: #f59e0b;
+  --category-purpose-from: #e8d5c4;
+  --category-purpose-to: #c9a882;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-grace: var(--grace);
+  --color-card-bg: var(--card-bg);
+  --color-sabbath-bg: var(--sabbath-bg);
+  --color-sabbath-text: var(--sabbath-text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode - warm, soft dark palette */
+    --background: #1a1410;           /* Warm dark brown (not pure black) */
+    --foreground: #f5ebe0;           /* Warm cream text */
+    --primary: #f59e0b;              /* Bright amber/gold */
+    --primary-dark: #fbbf24;         /* Light golden */
+    --secondary: #e89c6c;            /* Light terracotta */
+    --accent: #fcd34d;               /* Soft yellow */
+    --muted: #2d2419;                /* Slightly lighter warm brown */
+    --border: #3d3229;               /* Medium warm brown */
+    --success: #94b99e;              /* Light sage */
+    --grace: #c9a882;                /* Medium sand */
+    --card-bg: #231c15;              /* Warm dark card background */
+    --shadow-color: rgba(245, 158, 11, 0.12);  /* Warm golden-tinted shadow */
+    --sabbath-bg: #2d2419;
+    --sabbath-text: #a8a29e;
+
+    /* Category gradients adjusted for dark mode */
+    --category-anxiety-from: #7a9985;
+    --category-anxiety-to: #6a8975;
+    --category-work-from: #c9a882;
+    --category-work-to: #b8956a;
+    --category-relationships-from: #d47c4c;
+    --category-relationships-to: #c76a3b;
+    --category-justice-from: #f59e0b;
+    --category-justice-to: #d97706;
+    --category-sabbath-from: #b8956a;
+    --category-sabbath-to: #a78559;
+    --category-identity-from: #d4b89a;
+    --category-identity-to: #c9a882;
+    --category-community-from: #fcd34d;
+    --category-community-to: #fbbf24;
+    --category-purpose-from: #c9a882;
+    --category-purpose-to: #b8956a;
+  }
+}
+
+/* Mobile-first base styles */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Mobile touch optimization */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* Custom scrollbar for mobile webkit */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* Minimal shadow utilities (Neo-Brutalist) */
+.shadow-float {
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-elevated {
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide scrollbar utility (for horizontal scrolling) */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Typography utilities (tight tracking for modern feel) */
+.tracking-tighter {
+  letter-spacing: -0.05em;
+}
+
+.tracking-tight {
+  letter-spacing: -0.025em;
+}
+
+.leading-snug {
+  line-height: 1.375;
+}
+
+/* Warm gradient utilities */
+.gradient-warm-primary {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+.gradient-warm-subtle {
+  background: linear-gradient(135deg, var(--muted), var(--background));
+}
+
+/* Accessible focus indicators */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Enhanced focus styles for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
