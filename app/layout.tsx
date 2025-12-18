@@ -5,6 +5,7 @@ import MobileNav from "@/components/layout/MobileNav";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import OfflineIndicator from "@/components/ui/OfflineIndicator";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
+import SplashScreens from "@/components/SplashScreens";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,6 +62,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <SplashScreens />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
