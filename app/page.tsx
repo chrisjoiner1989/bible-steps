@@ -11,6 +11,7 @@ import WeeklyCalendar from '@/components/home/WeeklyCalendar';
 import QuickActions from '@/components/home/QuickActions';
 import ProgressStatsModal from '@/components/home/ProgressStatsModal';
 import ReminderSettingsModal from '@/components/home/ReminderSettingsModal';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { getVerseOfTheDay } from '@/lib/data/motivational-verses';
 import {
@@ -24,7 +25,7 @@ import {
   getCompletedDevotions,
 } from '@/lib/storage';
 
-export default function HomePage() {
+function HomePageContent() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
   const [gracePeriodActive, setGracePeriodActive] = useState(false);
@@ -323,5 +324,13 @@ export default function HomePage() {
         />
       )}
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <ProtectedRoute>
+      <HomePageContent />
+    </ProtectedRoute>
   );
 }

@@ -3,8 +3,19 @@
 import { Heart, HelpCircle, Mail, Bug, FileText, Shield, Scale, ExternalLink } from 'lucide-react';
 
 export default function AboutTab() {
-  const appVersion = '1.0.0';
-  const lastUpdated = '2024';
+  const appVersion = '0.1.0'; // From package.json
+
+  const getStorageSize = () => {
+    if (typeof window === 'undefined') return '0 KB';
+
+    let total = 0;
+    for (const key in localStorage) {
+      if (key.startsWith('bible-steps-')) {
+        total += localStorage[key].length;
+      }
+    }
+    return `${(total / 1024).toFixed(2)} KB`;
+  };
 
   return (
     <div className="pb-20 px-4 pt-6 space-y-6">
@@ -17,8 +28,8 @@ export default function AboutTab() {
             <span className="text-sm font-medium text-foreground">{appVersion}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-foreground/60">Last Updated</span>
-            <span className="text-sm font-medium text-foreground">{lastUpdated}</span>
+            <span className="text-sm text-foreground/60">Storage Used</span>
+            <span className="text-sm font-medium text-foreground">{getStorageSize()}</span>
           </div>
         </div>
       </section>

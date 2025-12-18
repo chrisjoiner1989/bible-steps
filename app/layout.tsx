@@ -7,6 +7,7 @@ import OfflineIndicator from "@/components/ui/OfflineIndicator";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import SplashScreens from "@/components/SplashScreens";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,15 +70,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
-          <OfflineIndicator />
-          <div className="pb-20">
-            {children}
-          </div>
-          <MobileNav />
-          <ServiceWorkerRegistration />
-          <InstallPrompt />
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <OfflineIndicator />
+            <div className="pb-20">
+              {children}
+            </div>
+            <MobileNav />
+            <ServiceWorkerRegistration />
+            <InstallPrompt />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

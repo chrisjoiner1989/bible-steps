@@ -1,13 +1,17 @@
 'use client';
 
-import { Bell, Moon, Book, Clock, Heart, Tag } from 'lucide-react';
+import { Bell, Moon, Book, Clock, Heart, Tag, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAppSettings, saveAppSettings, getNotificationPreferences, saveNotificationPreferences } from '@/lib/storage';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import type { AppSettings, NotificationPreferences, BibleTranslation, DevotionCategory } from '@/types';
 
 export default function SettingsTab() {
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { logout, user } = useAuth();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [notifPrefs, setNotifPrefs] = useState<NotificationPreferences | null>(null);
 
@@ -346,6 +350,34 @@ export default function SettingsTab() {
               <option value="7">7 devotions</option>
             </select>
           </div>
+        </div>
+      </section>
+
+      {/* Account Section */}
+      <section>
+        <div className="flex items-center gap-2 mb-4">
+          <LogOut className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-bold text-foreground">Account</h2>
+        </div>
+
+        <div className="space-y-3">
+          {/* Logged in as */}
+          <div className="p-4 rounded-lg bg-card border border-border">
+            <div className="text-sm text-foreground/60 mb-1">Logged in as</div>
+            <div className="font-medium text-foreground">{user?.email || 'Not logged in'}</div>
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={() => {
+              logout();
+              router.push('/login');
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md bg-destructive text-destructive-foreground font-medium active:scale-95 transition-transform"
+          >
+            <LogOut className="w-5 h-5" />
+            Log Out
+          </button>
         </div>
       </section>
     </div>

@@ -11,10 +11,11 @@ import AboutTab from '@/components/profile/AboutTab';
 import EditProfileModal from '@/components/profile/EditProfileModal';
 import ResetConfirmModal from '@/components/profile/ResetConfirmModal';
 import ProgressStatsModal from '@/components/home/ProgressStatsModal';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { getUserProfile, saveUserProfile } from '@/lib/storage';
 import type { UserProfile } from '@/types';
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -89,5 +90,13 @@ export default function ProfilePage() {
         onClose={() => setShowFullStats(false)}
       />
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <ProtectedRoute>
+      <ProfilePageContent />
+    </ProtectedRoute>
   );
 }
