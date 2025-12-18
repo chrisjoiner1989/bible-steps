@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   COMPLETED_DEVOTIONS: 'bible-steps-completed-devotions',
   STREAK_DATA: 'bible-steps-streak-data',
   LAST_VISIT: 'bible-steps-last-visit',
+  USER_DEVOTIONS: 'bible-steps-user-devotions',
 } as const;
 
 // Types
@@ -293,6 +294,7 @@ export function resetAllData(): void {
     localStorage.removeItem(STORAGE_KEYS.COMPLETED_DEVOTIONS);
     localStorage.removeItem(STORAGE_KEYS.STREAK_DATA);
     localStorage.removeItem(STORAGE_KEYS.LAST_VISIT);
+    localStorage.removeItem(STORAGE_KEYS.USER_DEVOTIONS);
     console.log('All user data reset');
   } catch (error) {
     console.error('Failed to reset user data:', error);
@@ -306,6 +308,7 @@ export function exportUserData(): string {
   const data = {
     progress: getUserProgress(),
     completedDevotions: getCompletedDevotions(),
+    userDevotions: getUserDevotions(),
     exportedAt: new Date().toISOString(),
   };
   return JSON.stringify(data, null, 2);
@@ -326,10 +329,138 @@ export function importUserData(jsonData: string): boolean {
       saveCompletedDevotions(data.completedDevotions);
     }
 
+    if (data.userDevotions) {
+      saveUserDevotions(data.userDevotions);
+    }
+
     console.log('User data imported successfully');
     return true;
   } catch (error) {
     console.error('Failed to import user data:', error);
     return false;
   }
+}
+
+/**
+ * Get user's custom devotions (sorted by scheduled date)
+ */
+export function getUserDevotions(): any[] {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.USER_DEVOTIONS);
+    if (!stored) return [];
+    const devotions = JSON.parse(stored);
+
+    // Sort by scheduled date (earliest first), unscheduled at the end
+    return devotions.sort((a: any, b: any) => {
+      const dateA = a.scheduledDate ? new Date(a.scheduledDate).getTime() : Infinity;
+      const dateB = b.scheduledDate ? new Date(b.scheduledDate).getTime() : Infinity;
+      return dateA - dateB;
+    });
+  } catch (error) {
+    console.error('Failed to load user devotions:', error);
+    return [];
+  }
+}
+
+/**
+ * Save user's devotions
+ */
+export function saveUserDevotions(devotions: any[]): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(STORAGE_KEYS.USER_DEVOTIONS, JSON.stringify(devotions));
+  } catch (error) {
+    console.error('Failed to save user devotions:', error);
+  }
+}
+
+/**
+ * Add a new devotion
+ */
+export function addDevotion(devotion: any): void {
+  const devotions = getUserDevotions();
+  devotions.push(devotion);
+  saveUserDevotions(devotions);
+}
+
+/**
+ * Update an existing devotion
+ */
+export function updateDevotion(devotionId: string, updates: Partial<any>): void {
+  const devotions = getUserDevotions();
+  const index = devotions.findIndex(d => d.id === devotionId);
+
+  if (index !== -1) {
+    devotions[index] = { ...devotions[index], ...updates };
+    saveUserDevotions(devotions);
+  }
+}
+
+/**
+ * Delete a devotion
+ */
+export function deleteDevotion(devotionId: string): void {
+  const devotions = getUserDevotions();
+  const filtered = devotions.filter(d => d.id !== devotionId);
+  saveUserDevotions(filtered);
+}
+
+/**
+ * Get a single devotion by ID
+ */
+export function getDevotionById(devotionId: string): any | null {
+  const devotions = getUserDevotions();
+  return devotions.find(d => d.id === devotionId) || null;
+}
+
+/**
+ * Get today's devotion based on scheduled date
+ */
+export function getTodaysDevotion(): any | null {
+  const devotions = getUserDevotions();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Find the first devotion scheduled for today or earlier that hasn't been completed
+  for (const devotion of devotions) {
+    if (devotion.scheduledDate) {
+      const scheduledDate = new Date(devotion.scheduledDate);
+      scheduledDate.setHours(0, 0, 0, 0);
+
+      if (scheduledDate <= today) {
+        return devotion;
+      }
+    }
+  }
+
+  // If no scheduled devotions, return the first one
+  return devotions.length > 0 ? devotions[0] : null;
+}
+
+/**
+ * Get upcoming devotions (scheduled for future dates)
+ */
+export function getUpcomingDevotions(limit: number = 3): any[] {
+  const devotions = getUserDevotions();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return devotions
+    .filter((d: any) => {
+      if (!d.scheduledDate) return false;
+      const scheduledDate = new Date(d.scheduledDate);
+      scheduledDate.setHours(0, 0, 0, 0);
+      return scheduledDate > today;
+    })
+    .slice(0, limit);
+}
+
+/**
+ * Reschedule a devotion to a new date
+ */
+export function rescheduleDevotion(devotionId: string, newDate: Date): void {
+  updateDevotion(devotionId, { scheduledDate: newDate });
 }

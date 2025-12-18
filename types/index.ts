@@ -25,7 +25,8 @@ export interface NotificationPreferences {
 export interface Devotion {
   id: string;
   title: string;
-  date: Date;
+  date: Date; // Creation date
+  scheduledDate?: Date; // When the devotion should appear
   readingTime: number; // minutes
   scripture: ScriptureReference;
   content: string;
@@ -36,6 +37,7 @@ export interface Devotion {
 }
 
 export type DevotionCategory =
+  | "general"
   | "anxiety-peace"
   | "work-ethics"
   | "relationships"
@@ -43,7 +45,9 @@ export type DevotionCategory =
   | "rest-sabbath"
   | "identity"
   | "community"
-  | "purpose";
+  | "purpose"
+  | "faith"
+  | "prayer";
 
 export interface ScriptureReference {
   book: string;
@@ -54,7 +58,7 @@ export interface ScriptureReference {
   text: string;
 }
 
-export type BibleTranslation = "NIV" | "ESV" | "NLT" | "MSG" | "NRSV";
+export type BibleTranslation = "NIV" | "ESV" | "NLT" | "MSG" | "NRSV" | "KJV" | "NKJV" | "CSB";
 
 export interface Step {
   id: string;
