@@ -115,6 +115,8 @@ export async function getServiceWorkerVersion(): Promise<string | null> {
     return null;
   }
 
+  const controller = navigator.serviceWorker.controller;
+
   return new Promise((resolve) => {
     const messageChannel = new MessageChannel();
 
@@ -122,7 +124,7 @@ export async function getServiceWorkerVersion(): Promise<string | null> {
       resolve(event.data?.version || null);
     };
 
-    navigator.serviceWorker.controller.postMessage(
+    controller.postMessage(
       { type: 'GET_VERSION' },
       [messageChannel.port2]
     );
