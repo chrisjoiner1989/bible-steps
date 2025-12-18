@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Calendar, Sparkles } from 'lucide-react';
 import MobileHeader from '@/components/layout/MobileHeader';
 import Footer from '@/components/layout/Footer';
@@ -8,23 +8,79 @@ import StreakDisplay from '@/components/steps/StreakDisplay';
 import DevotionCard from '@/components/devotions/DevotionCard';
 import { sampleDevotions } from '@/lib/data/sample-devotions';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import {
+  getUserProgress,
+  hasCompletedTodaysDevotion,
+  markDevotionComplete,
+  checkStreakStatus,
+  getTodayDateString,
+} from '@/lib/storage';
 
 export default function HomePage() {
-  const [currentStreak, setCurrentStreak] = useState(7);
-  const [longestStreak] = useState(12);
-  const [gracePeriodActive] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
+  const [gracePeriodActive, setGracePeriodActive] = useState(false);
   const [completedToday, setCompletedToday] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Get today's devotion (in a real app, this would be date-based)
-  const todaysDevotion = sampleDevotions[0];
-  const upcomingDevotions = sampleDevotions.slice(1, 4);
+  // Load user progress from local storage
+  useEffect(() => {
+    // Check streak status on mount
+    checkStreakStatus();
+
+    // Load progress
+    const progress = getUserProgress();
+    setCurrentStreak(progress.currentStreak);
+    setLongestStreak(progress.longestStreak);
+    setGracePeriodActive(progress.gracePeriodActive);
+
+    // Check if completed today
+    const completedToday = hasCompletedTodaysDevotion();
+    setCompletedToday(completedToday);
+
+    setIsLoading(false);
+  }, []);
+
+  // Get today's devotion based on date
+  const today = new Date();
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24);
+  const devotionIndex = dayOfYear % sampleDevotions.length;
+  const todaysDevotion = sampleDevotions[devotionIndex];
+  const upcomingDevotions = [
+    sampleDevotions[(devotionIndex + 1) % sampleDevotions.length],
+    sampleDevotions[(devotionIndex + 2) % sampleDevotions.length],
+    sampleDevotions[(devotionIndex + 3) % sampleDevotions.length],
+  ];
 
   const handleStartDevotion = useCallback(() => {
-    // In a real app, navigate to the devotion detail page
-    // For demo purposes, mark as completed
+    if (completedToday) {
+      console.log('Already completed today');
+      return;
+    }
+
+    // Mark as completed
+    markDevotionComplete(todaysDevotion.id);
+
+    // Update local state
+    const newProgress = getUserProgress();
+    setCurrentStreak(newProgress.currentStreak);
+    setLongestStreak(newProgress.longestStreak);
+    setGracePeriodActive(newProgress.gracePeriodActive);
     setCompletedToday(true);
-    setCurrentStreak(prev => prev + 1);
-  }, []);
+  }, [completedToday, todaysDevotion.id]);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MobileHeader title="Bible Steps" />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-foreground/60">Loading your progress...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Check if we have devotions available
   if (!todaysDevotion) {
