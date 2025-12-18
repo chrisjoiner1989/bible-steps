@@ -1,11 +1,7 @@
-import { Metadata } from 'next';
+'use client';
+
 import { WifiOff, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-
-export const metadata: Metadata = {
-  title: 'Offline - Bible Steps',
-  description: 'You are currently offline. Bible Steps works offline with cached content.',
-};
 
 export default function OfflinePage() {
   return (
