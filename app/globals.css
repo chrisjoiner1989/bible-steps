@@ -56,6 +56,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark mode - can be triggered by system preference or manual toggle */
 @media (prefers-color-scheme: dark) {
   :root {
     /* Dark mode - warm, soft dark palette */
@@ -92,6 +93,82 @@
     --category-purpose-from: #c9a882;
     --category-purpose-to: #b8956a;
   }
+}
+
+/* Manual dark mode override via data attribute */
+:root[data-theme='dark'] {
+  /* Dark mode - warm, soft dark palette */
+  --background: #1a1410;           /* Warm dark brown (not pure black) */
+  --foreground: #f5ebe0;           /* Warm cream text */
+  --primary: #f59e0b;              /* Bright amber/gold */
+  --primary-dark: #fbbf24;         /* Light golden */
+  --secondary: #e89c6c;            /* Light terracotta */
+  --accent: #fcd34d;               /* Soft yellow */
+  --muted: #2d2419;                /* Slightly lighter warm brown */
+  --border: #3d3229;               /* Medium warm brown */
+  --success: #94b99e;              /* Light sage */
+  --grace: #c9a882;                /* Medium sand */
+  --card-bg: #231c15;              /* Warm dark card background */
+  --shadow-color: rgba(245, 158, 11, 0.12);  /* Warm golden-tinted shadow */
+  --sabbath-bg: #2d2419;
+  --sabbath-text: #a8a29e;
+
+  /* Category gradients adjusted for dark mode */
+  --category-anxiety-from: #7a9985;
+  --category-anxiety-to: #6a8975;
+  --category-work-from: #c9a882;
+  --category-work-to: #b8956a;
+  --category-relationships-from: #d47c4c;
+  --category-relationships-to: #c76a3b;
+  --category-justice-from: #f59e0b;
+  --category-justice-to: #d97706;
+  --category-sabbath-from: #b8956a;
+  --category-sabbath-to: #a78559;
+  --category-identity-from: #d4b89a;
+  --category-identity-to: #c9a882;
+  --category-community-from: #fcd34d;
+  --category-community-to: #fbbf24;
+  --category-purpose-from: #c9a882;
+  --category-purpose-to: #b8956a;
+}
+
+/* Manual light mode override via data attribute */
+:root[data-theme='light'] {
+  /* Light mode - warm, cozy coffee shop palette */
+  --background: #fdf8f3;           /* Warm cream (like steamed milk) */
+  --foreground: #2d1f14;           /* Deep warm brown (like dark roast coffee) */
+  --primary: #d97706;              /* Warm amber/gold (brand color) */
+  --primary-dark: #b45309;         /* Deep burnt amber */
+  --secondary: #dc8a5b;            /* Warm terracotta/clay */
+  --accent: #f59e0b;               /* Bright golden yellow */
+  --muted: #f5ebe0;                /* Soft beige (like latte foam) */
+  --border: #e8d5c4;               /* Warm taupe */
+  --success: #84a98c;              /* Soft sage green */
+  --grace: #e6c9a8;                /* Warm sand/biscuit */
+  --card-bg: #fffbf7;              /* Warm white (paper) */
+  --shadow-color: rgba(217, 119, 6, 0.15);  /* Warm amber-tinted shadow */
+
+  /* Sabbath mode colors - muted, restful */
+  --sabbath-bg: #f5ebe0;
+  --sabbath-text: #78716c;
+
+  /* Category-specific warm gradients */
+  --category-anxiety-from: #94b99e;
+  --category-anxiety-to: #84a98c;
+  --category-work-from: #e6c9a8;
+  --category-work-to: #d4a574;
+  --category-relationships-from: #e89c6c;
+  --category-relationships-to: #dc8a5b;
+  --category-justice-from: #d97706;
+  --category-justice-to: #b45309;
+  --category-sabbath-from: #c9a882;
+  --category-sabbath-to: #b8956a;
+  --category-identity-from: #f5ebe0;
+  --category-identity-to: #e6c9a8;
+  --category-community-from: #fbbf24;
+  --category-community-to: #f59e0b;
+  --category-purpose-from: #e8d5c4;
+  --category-purpose-to: #c9a882;
 }
 
 /* Mobile-first base styles */

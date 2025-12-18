@@ -1,23 +1,93 @@
 'use client';
 
-import { User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import MobileHeader from '@/components/layout/MobileHeader';
+import TabNavigation, { ProfileTab } from '@/components/profile/TabNavigation';
+import OverviewTab from '@/components/profile/OverviewTab';
+import SettingsTab from '@/components/profile/SettingsTab';
+import DataTab from '@/components/profile/DataTab';
+import AboutTab from '@/components/profile/AboutTab';
+import EditProfileModal from '@/components/profile/EditProfileModal';
+import ResetConfirmModal from '@/components/profile/ResetConfirmModal';
+import ProgressStatsModal from '@/components/home/ProgressStatsModal';
+import { getUserProfile, saveUserProfile } from '@/lib/storage';
+import type { UserProfile } from '@/types';
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<ProfileTab>('overview');
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showFullStats, setShowFullStats] = useState(false);
+
+  useEffect(() => {
+    setProfile(getUserProfile());
+  }, []);
+
+  const handleSaveProfile = (updatedProfile: UserProfile) => {
+    saveUserProfile(updatedProfile);
+    setProfile(updatedProfile);
+  };
+
+  const handleResetConfirm = () => {
+    // After reset, reload the page to clear all state
+    window.location.reload();
+  };
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MobileHeader title="Profile" />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-foreground/60">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <MobileHeader title="Profile" />
-      <main className="px-4 py-6">
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <User className="w-16 h-16 text-primary mb-4" />
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            Your Profile
-          </h2>
-          <p className="text-foreground/60 max-w-sm">
-            Manage settings, notifications, and track your spiritual journey
-          </p>
-        </div>
+
+      {/* Tab Navigation */}
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Tab Content */}
+      <main>
+        {activeTab === 'overview' && (
+          <OverviewTab
+            profile={profile}
+            onEditProfile={() => setShowEditProfile(true)}
+            onShowFullStats={() => setShowFullStats(true)}
+          />
+        )}
+        {activeTab === 'settings' && <SettingsTab />}
+        {activeTab === 'data' && (
+          <DataTab onShowResetConfirm={() => setShowResetConfirm(true)} />
+        )}
+        {activeTab === 'about' && <AboutTab />}
       </main>
+
+      {/* Modals */}
+      <EditProfileModal
+        isOpen={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+        profile={profile}
+        onSave={handleSaveProfile}
+      />
+
+      <ResetConfirmModal
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={handleResetConfirm}
+      />
+
+      <ProgressStatsModal
+        isOpen={showFullStats}
+        onClose={() => setShowFullStats(false)}
+      />
     </div>
   );
 }

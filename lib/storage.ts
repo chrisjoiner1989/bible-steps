@@ -1,5 +1,7 @@
 'use client';
 
+import type { UserProfile, AppSettings, NotificationPreferences } from '@/types';
+
 /**
  * Local Storage Utilities for Bible Steps
  * Handles persistence of user progress, streaks, and devotion completion
@@ -11,6 +13,9 @@ const STORAGE_KEYS = {
   STREAK_DATA: 'bible-steps-streak-data',
   LAST_VISIT: 'bible-steps-last-visit',
   USER_DEVOTIONS: 'bible-steps-user-devotions',
+  USER_PROFILE: 'bible-steps-user-profile',
+  APP_SETTINGS: 'bible-steps-app-settings',
+  NOTIFICATION_PREFS: 'bible-steps-notification-prefs',
 } as const;
 
 // Types
@@ -295,6 +300,9 @@ export function resetAllData(): void {
     localStorage.removeItem(STORAGE_KEYS.STREAK_DATA);
     localStorage.removeItem(STORAGE_KEYS.LAST_VISIT);
     localStorage.removeItem(STORAGE_KEYS.USER_DEVOTIONS);
+    localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+    localStorage.removeItem(STORAGE_KEYS.APP_SETTINGS);
+    localStorage.removeItem(STORAGE_KEYS.NOTIFICATION_PREFS);
     console.log('All user data reset');
   } catch (error) {
     console.error('Failed to reset user data:', error);
@@ -463,4 +471,227 @@ export function getUpcomingDevotions(limit: number = 3): any[] {
  */
 export function rescheduleDevotion(devotionId: string, newDate: Date): void {
   updateDevotion(devotionId, { scheduledDate: newDate });
+}
+
+// ============================================================
+// User Profile Functions
+// ============================================================
+
+/**
+ * Get default user profile
+ */
+function getDefaultUserProfile(): UserProfile {
+  const firstCompletion = getCompletedDevotions()[0];
+  const joinDate = firstCompletion?.completedAt || new Date().toISOString();
+
+  return {
+    displayName: 'User',
+    email: undefined,
+    avatar: undefined,
+    joinDate,
+  };
+}
+
+/**
+ * Get user profile from local storage
+ */
+export function getUserProfile(): UserProfile {
+  if (typeof window === 'undefined') {
+    return getDefaultUserProfile();
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+    if (!stored) return getDefaultUserProfile();
+    return JSON.parse(stored) as UserProfile;
+  } catch (error) {
+    console.error('Failed to load user profile:', error);
+    return getDefaultUserProfile();
+  }
+}
+
+/**
+ * Save user profile to local storage
+ */
+export function saveUserProfile(profile: UserProfile): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
+  } catch (error) {
+    console.error('Failed to save user profile:', error);
+  }
+}
+
+// ============================================================
+// App Settings Functions
+// ============================================================
+
+/**
+ * Get default app settings
+ */
+function getDefaultAppSettings(): AppSettings {
+  return {
+    theme: 'system',
+    defaultTranslation: 'NIV',
+    readingTimeGoal: 10,
+    sabbathMode: false,
+    sabbathDay: 0, // Sunday
+    autoAdvance: true,
+    favoriteCategories: [],
+    hideCompleted: false,
+    upcomingCount: 3,
+  };
+}
+
+/**
+ * Get app settings from local storage
+ */
+export function getAppSettings(): AppSettings {
+  if (typeof window === 'undefined') {
+    return getDefaultAppSettings();
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.APP_SETTINGS);
+    if (!stored) return getDefaultAppSettings();
+    return JSON.parse(stored) as AppSettings;
+  } catch (error) {
+    console.error('Failed to load app settings:', error);
+    return getDefaultAppSettings();
+  }
+}
+
+/**
+ * Save app settings to local storage
+ */
+export function saveAppSettings(settings: AppSettings): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(STORAGE_KEYS.APP_SETTINGS, JSON.stringify(settings));
+  } catch (error) {
+    console.error('Failed to save app settings:', error);
+  }
+}
+
+// ============================================================
+// Notification Preferences Functions
+// ============================================================
+
+/**
+ * Get default notification preferences
+ */
+function getDefaultNotificationPreferences(): NotificationPreferences {
+  return {
+    enabled: false,
+    time: '09:00',
+    graceBased: true,
+    quietHours: {
+      enabled: false,
+      start: '22:00',
+      end: '08:00',
+    },
+    mentalHealthMode: false,
+  };
+}
+
+/**
+ * Get notification preferences from local storage
+ */
+export function getNotificationPreferences(): NotificationPreferences {
+  if (typeof window === 'undefined') {
+    return getDefaultNotificationPreferences();
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_PREFS);
+    if (!stored) return getDefaultNotificationPreferences();
+    return JSON.parse(stored) as NotificationPreferences;
+  } catch (error) {
+    console.error('Failed to load notification preferences:', error);
+    return getDefaultNotificationPreferences();
+  }
+}
+
+/**
+ * Save notification preferences to local storage
+ */
+export function saveNotificationPreferences(prefs: NotificationPreferences): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATION_PREFS, JSON.stringify(prefs));
+  } catch (error) {
+    console.error('Failed to save notification preferences:', error);
+  }
+}
+
+// ============================================================
+// Data Export/Import Functions
+// ============================================================
+
+/**
+ * Download backup as JSON file
+ */
+export function downloadBackup(): void {
+  const data = {
+    profile: getUserProfile(),
+    settings: getAppSettings(),
+    notificationPrefs: getNotificationPreferences(),
+    progress: getUserProgress(),
+    completedDevotions: getCompletedDevotions(),
+    userDevotions: getUserDevotions(),
+    exportedAt: new Date().toISOString(),
+    version: '1.0',
+  };
+
+  const jsonString = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `bible-steps-backup-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Upload and restore backup from file
+ */
+export function uploadBackup(file: File): Promise<boolean> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const jsonData = e.target?.result as string;
+        const data = JSON.parse(jsonData);
+
+        // Restore all data
+        if (data.profile) saveUserProfile(data.profile);
+        if (data.settings) saveAppSettings(data.settings);
+        if (data.notificationPrefs) saveNotificationPreferences(data.notificationPrefs);
+        if (data.progress) saveUserProgress(data.progress);
+        if (data.completedDevotions) saveCompletedDevotions(data.completedDevotions);
+        if (data.userDevotions) saveUserDevotions(data.userDevotions);
+
+        console.log('Backup restored successfully');
+        resolve(true);
+      } catch (error) {
+        console.error('Failed to restore backup:', error);
+        resolve(false);
+      }
+    };
+
+    reader.onerror = () => {
+      console.error('Failed to read backup file');
+      resolve(false);
+    };
+
+    reader.readAsText(file);
+  });
 }

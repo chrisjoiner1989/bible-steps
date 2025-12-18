@@ -14,12 +14,33 @@ export interface User {
 
 export interface NotificationPreferences {
   enabled: boolean;
+  time: string; // HH:MM format for daily reminder
   graceBased: boolean;
   quietHours: {
+    enabled: boolean;
     start: string; // "22:00"
     end: string; // "08:00"
   };
   mentalHealthMode: boolean;
+}
+
+export interface UserProfile {
+  displayName: string;
+  email?: string;
+  avatar?: string; // URL or icon name
+  joinDate: string; // ISO date
+}
+
+export interface AppSettings {
+  theme: 'light' | 'dark' | 'system';
+  defaultTranslation: BibleTranslation;
+  readingTimeGoal: 5 | 10 | 15; // minutes
+  sabbathMode: boolean;
+  sabbathDay: 0 | 1 | 2 | 3 | 4 | 5 | 6; // Sunday = 0
+  autoAdvance: boolean;
+  favoriteCategories: DevotionCategory[];
+  hideCompleted: boolean;
+  upcomingCount: 3 | 5 | 7;
 }
 
 export interface Devotion {
